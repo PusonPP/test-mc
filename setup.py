@@ -4,94 +4,57 @@ from Cython.Build import cythonize
 from glob import glob
 
 import numpy
+from pathlib import Path
 
 flags = {'define_macros': [('NPY_NO_DEPRECATED_API', 'NPY_1_7_API_VERSION')]}
 
-extensions = [
-    Extension(name='mc.JavaUtils',
-              sources=['mc/JavaUtils.pyx'],
-              include_dirs=[numpy.get_include()], **flags),
-    Extension(name='mc.net.minecraft.game.entity.Entity',
-              sources=['mc/net/minecraft/game/entity/Entity.pyx'],
-              include_dirs=[numpy.get_include()], **flags),
-    Extension(name='mc.net.minecraft.game.entity.EntityLiving',
-              sources=['mc/net/minecraft/game/entity/EntityLiving.pyx'],
-              include_dirs=[numpy.get_include()], **flags),
-    Extension(name='mc.net.minecraft.game.entity.AILiving',
-              sources=['mc/net/minecraft/game/entity/AILiving.pyx'],
-              include_dirs=[numpy.get_include()], **flags),
-    Extension(name='mc.net.minecraft.game.physics.AxisAlignedBB',
-              sources=['mc/net/minecraft/game/physics/AxisAlignedBB.pyx'], **flags),
-    Extension(name='mc.net.minecraft.client.gui.FontRenderer',
-              sources=['mc/net/minecraft/client/gui/FontRenderer.pyx'], **flags),
-    Extension(name='mc.net.minecraft.client.render.Frustum',
-              sources=['mc/net/minecraft/client/render/Frustum.pyx'],
-              include_dirs=[numpy.get_include()], **flags),
-    Extension(name='mc.net.minecraft.client.render.WorldRenderer',
-              sources=['mc/net/minecraft/client/render/WorldRenderer.pyx'],
-              include_dirs=[numpy.get_include()], **flags),
-    Extension(name='mc.net.minecraft.client.render.Tessellator',
-              sources=['mc/net/minecraft/client/render/Tessellator.pyx'],
-              include_dirs=[numpy.get_include()], **flags),
-    Extension(name='mc.net.minecraft.client.render.RenderBlocks',
-              sources=['mc/net/minecraft/client/render/RenderBlocks.pyx'],
-              include_dirs=[numpy.get_include()], **flags),
-    Extension(name='mc.net.minecraft.client.render.RenderGlobal',
-              sources=['mc/net/minecraft/client/render/RenderGlobal.pyx'],
-              include_dirs=[numpy.get_include()], **flags),
-    Extension(name='mc.net.minecraft.client.render.texture.TextureFX',
-              sources=['mc/net/minecraft/client/render/texture/TextureFX.pyx'], **flags),
-    Extension(name='mc.net.minecraft.client.render.texture.TextureFlamesFX',
-              sources=['mc/net/minecraft/client/render/texture/TextureFlamesFX.pyx'],
-              include_dirs=[numpy.get_include()], **flags),
-    Extension(name='mc.net.minecraft.client.render.texture.TextureGearsFX',
-              sources=['mc/net/minecraft/client/render/texture/TextureGearsFX.pyx'],
-              include_dirs=[numpy.get_include()], **flags),
-    Extension(name='mc.net.minecraft.client.render.texture.TextureLavaFX',
-              sources=['mc/net/minecraft/client/render/texture/TextureLavaFX.pyx'],
-              include_dirs=[numpy.get_include()], **flags),
-    Extension(name='mc.net.minecraft.client.render.texture.TextureWaterFX',
-              sources=['mc/net/minecraft/client/render/texture/TextureWaterFX.pyx'],
-              include_dirs=[numpy.get_include()], **flags),
-    Extension(name='mc.net.minecraft.client.render.texture.TextureWaterFlowFX',
-              sources=['mc/net/minecraft/client/render/texture/TextureWaterFlowFX.pyx'],
-              include_dirs=[numpy.get_include()], **flags),
-    Extension(name='mc.net.minecraft.client.effect.EntityFX',
-              sources=['mc/net/minecraft/client/effect/EntityFX.pyx'],
-              include_dirs=[numpy.get_include()], **flags),
-    Extension(name='mc.net.minecraft.game.level.World',
-              sources=['mc/net/minecraft/game/level/World.pyx'],
-              include_dirs=[numpy.get_include()], **flags),
-    Extension(name='mc.net.minecraft.game.level.EntityMap',
-              sources=['mc/net/minecraft/game/level/EntityMap.pyx'],
-              include_dirs=[numpy.get_include()], **flags),
-    Extension(name='mc.net.minecraft.game.level.EntityMapSlot',
-              sources=['mc/net/minecraft/game/level/EntityMapSlot.pyx'],
-              include_dirs=[numpy.get_include()], **flags),
-    Extension(name='mc.net.minecraft.game.level.generator.LevelGenerator',
-              sources=['mc/net/minecraft/game/level/generator/LevelGenerator.pyx'],
-              include_dirs=[numpy.get_include()], **flags),
-    Extension(name='mc.net.minecraft.game.level.generator.noise.NoiseGeneratorDistort',
-              sources=['mc/net/minecraft/game/level/generator/noise/NoiseGeneratorDistort.pyx'], **flags),
-    Extension(name='mc.net.minecraft.game.level.generator.noise.NoiseGeneratorOctaves',
-              sources=['mc/net/minecraft/game/level/generator/noise/NoiseGeneratorOctaves.pyx'],
-              include_dirs=[numpy.get_include()], **flags),
-    Extension(name='mc.net.minecraft.game.level.generator.noise.NoiseGeneratorPerlin',
-              sources=['mc/net/minecraft/game/level/generator/noise/NoiseGeneratorPerlin.pyx'],
-              include_dirs=[numpy.get_include()], **flags),
-    Extension(name='mc.net.minecraft.game.level.block.Block',
-              sources=['mc/net/minecraft/game/level/block/Block.pyx'],
-              include_dirs=[numpy.get_include()], **flags),
-    Extension(name='mc.net.minecraft.game.level.block.BlockFluid',
-              sources=['mc/net/minecraft/game/level/block/BlockFluid.pyx'],
-              include_dirs=[numpy.get_include()], **flags),
-    Extension(name='mc.net.minecraft.game.level.block.BlockFlowing',
-              sources=['mc/net/minecraft/game/level/block/BlockFlowing.pyx'],
-              include_dirs=[numpy.get_include()], **flags),
-    Extension(name='mc.net.minecraft.game.level.block.BlockFire',
-              sources=['mc/net/minecraft/game/level/block/BlockFire.pyx'],
-              include_dirs=[numpy.get_include()], **flags),
+
+def make_extension(name, path, include_numpy=False):
+    """Return an :class:`Extension` if source exists, otherwise ``None``."""
+    base = Path(path)
+    src = base.with_suffix('.pyx')
+    if not src.exists():
+        src = base.with_suffix('.py')
+        if not src.exists():
+            return None
+    kwargs = dict(**flags)
+    if include_numpy:
+        kwargs['include_dirs'] = [numpy.get_include()]
+    return Extension(name=name, sources=[str(src)], **kwargs)
+
+
+ext_specs = [
+    ('mc.JavaUtils', 'mc/JavaUtils', True),
+    ('mc.net.minecraft.game.entity.Entity', 'mc/net/minecraft/game/entity/Entity', True),
+    ('mc.net.minecraft.game.entity.EntityLiving', 'mc/net/minecraft/game/entity/EntityLiving', True),
+    ('mc.net.minecraft.game.entity.AILiving', 'mc/net/minecraft/game/entity/AILiving', True),
+    ('mc.net.minecraft.game.physics.AxisAlignedBB', 'mc/net/minecraft/game/physics/AxisAlignedBB', False),
+    ('mc.net.minecraft.client.gui.FontRenderer', 'mc/net/minecraft/client/gui/FontRenderer', False),
+    ('mc.net.minecraft.client.render.Frustum', 'mc/net/minecraft/client/render/Frustum', True),
+    ('mc.net.minecraft.client.render.WorldRenderer', 'mc/net/minecraft/client/render/WorldRenderer', True),
+    ('mc.net.minecraft.client.render.Tessellator', 'mc/net/minecraft/client/render/Tessellator', True),
+    ('mc.net.minecraft.client.render.RenderBlocks', 'mc/net/minecraft/client/render/RenderBlocks', True),
+    ('mc.net.minecraft.client.render.RenderGlobal', 'mc/net/minecraft/client/render/RenderGlobal', True),
+    ('mc.net.minecraft.client.render.texture.TextureFX', 'mc/net/minecraft/client/render/texture/TextureFX', False),
+    ('mc.net.minecraft.client.render.texture.TextureFlamesFX', 'mc/net/minecraft/client/render/texture/TextureFlamesFX', True),
+    ('mc.net.minecraft.client.render.texture.TextureGearsFX', 'mc/net/minecraft/client/render/texture/TextureGearsFX', True),
+    ('mc.net.minecraft.client.render.texture.TextureLavaFX', 'mc/net/minecraft/client/render/texture/TextureLavaFX', True),
+    ('mc.net.minecraft.client.render.texture.TextureWaterFX', 'mc/net/minecraft/client/render/texture/TextureWaterFX', True),
+    ('mc.net.minecraft.client.render.texture.TextureWaterFlowFX', 'mc/net/minecraft/client/render/texture/TextureWaterFlowFX', True),
+    ('mc.net.minecraft.game.level.World', 'mc/net/minecraft/game/level/World', True),
+    ('mc.net.minecraft.game.level.EntityMap', 'mc/net/minecraft/game/level/EntityMap', True),
+    ('mc.net.minecraft.game.level.EntityMapSlot', 'mc/net/minecraft/game/level/EntityMapSlot', True),
+    ('mc.net.minecraft.game.level.generator.LevelGenerator', 'mc/net/minecraft/game/level/generator/LevelGenerator', True),
+    ('mc.net.minecraft.game.level.generator.noise.NoiseGeneratorDistort', 'mc/net/minecraft/game/level/generator/noise/NoiseGeneratorDistort', False),
+    ('mc.net.minecraft.game.level.generator.noise.NoiseGeneratorOctaves', 'mc/net/minecraft/game/level/generator/noise/NoiseGeneratorOctaves', True),
+    ('mc.net.minecraft.game.level.generator.noise.NoiseGeneratorPerlin', 'mc/net/minecraft/game/level/generator/noise/NoiseGeneratorPerlin', True),
+    ('mc.net.minecraft.game.level.block.Block', 'mc/net/minecraft/game/level/block/Block', True),
+    ('mc.net.minecraft.game.level.block.BlockFluid', 'mc/net/minecraft/game/level/block/BlockFluid', True),
+    ('mc.net.minecraft.game.level.block.BlockFlowing', 'mc/net/minecraft/game/level/block/BlockFlowing', True),
+    ('mc.net.minecraft.game.level.block.BlockFire', 'mc/net/minecraft/game/level/block/BlockFire', True),
 ]
+
+extensions = [ext for ext in (make_extension(*spec) for spec in ext_specs) if ext]
 
 setup(
     name='minecraft-python',
