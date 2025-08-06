@@ -521,7 +521,7 @@ class Minecraft(window.Window):
         block = blocks.blocksList[self.theWorld.getBlockId(x, y, z)]
         if editMode == 0:
             self.theWorld.extinguishFire(x, y, z, sideHit)
-            if block != blocks.bedrock:
+            if block:
                 self.playerController.clickBlock(x, y, z)
         else:
             item = self.thePlayer.inventory.getCurrentItem()
@@ -667,10 +667,7 @@ class Minecraft(window.Window):
         self.__textureWaterFX.textureId = 0
         self.__textureLavaFX.textureId = 0
         tex = self.renderEngine.getTexture('water.png')
-        if world.defaultFluid == blocks.waterMoving.blockID:
-            self.__textureWaterFX.textureId = tex
-        else:
-            self.__textureLavaFX.textureId = tex
+        self.__textureWaterFX.textureId = tex
 
         gc.collect()
 

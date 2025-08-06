@@ -57,7 +57,8 @@ cdef class World:
 
         self.rotSpawn = 0.0
 
-        self.defaultFluid = blocks.waterMoving.blockID
+        # No fluids are used in this trimmed down version.
+        self.defaultFluid = 0
 
         self.__worldAccesses = set()
         self.__tickList = set()
@@ -117,31 +118,6 @@ cdef class World:
         for i in range(256):
             self.__lightOpacity[i] = blocks.lightOpacity[i]
             self.__lightValue[i] = blocks.lightValue[i]
-
-        for x in range(self.width):
-            for z in range(self.length):
-                y = 0
-                while y < self.height:
-                    blockId = 0
-                    if y <= 1 and y < self.groundLevel - 1 and \
-                       b[((y + 1) * self.length + z) * self.width + x]:
-                        blockId = blocks.lavaStill.blockID
-                    elif y < self.groundLevel - 1:
-                        blockId = blocks.bedrock.blockID
-                    elif y < self.groundLevel:
-                        if self.groundLevel > self.waterLevel and \
-                           self.defaultFluid == blocks.waterMoving.blockID:
-                            blockId = blocks.grass.blockID
-                        else:
-                            blockId = blocks.dirt.blockID
-                    elif y < self.waterLevel:
-                        blockId = self.defaultFluid
-
-                    b[(y * self.length + z) * self.width + x] = blockId
-                    if y == 1 and x != 0 and z != 0 and x != self.width - 1 and z != self.length - 1:
-                        y = self.height - 2
-
-                    y += 1
 
         for i in range(len(b)):
             self.blocks[i] = b[i]
@@ -380,10 +356,6 @@ cdef class World:
                         aabb = block.getCollisionBoundingBoxFromPool(x, y, z)
                         if aabb and box.intersectsWith(aabb):
                             boxes.append(aabb)
-                    elif self.groundLevel < 0 and (y < self.groundLevel or y < self.waterLevel):
-                        aabb = blocks.bedrock.getCollisionBoundingBoxFromPool(x, y, z)
-                        if aabb and box.intersectsWith(aabb):
-                            boxes.append(aabb)
 
         return boxes
 
@@ -407,9 +379,6 @@ cdef class World:
         if blockType == oldBlock:
             return False
 
-        if blockType == 0 and (x == 0 or z == 0 or x == self.width - 1 or \
-            z == self.length - 1) and y >= self.groundLevel and y < self.waterLevel:
-            blockType = blocks.waterMoving.blockID
 
         self.blocks[(y * self.length + z) * self.width + x] = <char>blockType
         if oldBlock != 0:
@@ -630,22 +599,7 @@ cdef class World:
         return False
 
     cdef bint isBoundingBoxBurning(self, AxisAlignedBB box):
-        cdef int minX, maxX, minY, maxY, minZ, maxZ, x, y, z, blockId
-
-        minX = <int>floor(box.minX)
-        maxX = <int>floor(box.maxX + 1.0)
-        minY = <int>floor(box.minY)
-        maxY = <int>floor(box.maxY + 1.0)
-        minZ = <int>floor(box.minZ)
-        maxZ = <int>floor(box.maxZ + 1.0)
-        for x in range(minX, maxX):
-            for y in range(minY, maxY):
-                for z in range(minZ, maxZ):
-                    blockId = self.getBlockId(x, y, z)
-                    if blockId == blocks.fire.blockID or blockId == blocks.lavaMoving.blockID or \
-                       blockId == blocks.lavaStill.blockID:
-                        return True
-
+        # Fire and lava blocks are not present so nothing can burn.
         return False
 
     cdef bint handleMaterialAcceleration(self, AxisAlignedBB box, int material):
@@ -787,8 +741,8 @@ cdef class World:
         return (<Block>blocks.blocksList[block]).getBlockMaterial()
 
     cpdef inline bint isWater(self, int x, int y, int z):
-        cdef int block = self.getBlockId(x, y, z)
-        return block > 0 and (<Block>blocks.blocksList[block]).getBlockMaterial() == Material.water
+        # Water blocks are not present in this trimmed down version.
+        return False
 
     @cython.cdivision(True)
     def rayTraceBlocks(self, vec1, vec2):
@@ -1128,10 +1082,6 @@ cdef class World:
         flooded = 1
         self.__coords[0] = x + (z << 10)
         sourceBlock = -9999
-        if source == blocks.waterStill.blockID or source == blocks.waterMoving.blockID:
-            sourceBlock = blocks.waterSource.blockID
-        if source == blocks.lavaStill.blockID or source == blocks.lavaMoving.blockID:
-            sourceBlock = blocks.lavaSource.blockID
 
         global floodFillCounter
         floodedBlocks = 0
@@ -1362,25 +1312,8 @@ cdef class World:
                 worldAccess.playSound(name, x, y, z, volume, pitch)
 
     def extinguishFire(self, int x, int y, int z, int sideHit):
-        if sideHit == 0:
-            y -= 1
-        elif sideHit == 1:
-            y += 1
-        elif sideHit == 2:
-            z -= 1
-        elif sideHit == 3:
-            z += 1
-        elif sideHit == 4:
-            x -= 1
-        elif sideHit == 5:
-            x += 1
-
-        if self.getBlockId(x, y, z) == blocks.fire.blockID:
-            self.playSoundEffect(
-                x + 0.5, y + 0.5, z + 0.5, 'random.fizz', 0.5,
-                2.6 + (self.rand.nextFloat() - self.rand.nextFloat()) * 0.8
-            )
-            self.setBlockWithNotify(x, y, z, 0)
+        # Fire no longer exists so this method simply returns.
+        return
 
     def setBlockTileEntity(self, int x, int y, int z, entity):
         self.map[x + (y << 10) + (z << 10 << 10)] = entity

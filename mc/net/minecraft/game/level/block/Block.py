@@ -18,7 +18,7 @@ class Block:
         self.blocks = blocks
         self.blockID = blockId
         self.blockIndexInTexture = tex
-        self.stepSound = blocks.soundPowderFootstep
+        self.stepSound = blocks.soundStone
         self.blockParticleGravity = 1.0
         self._hardness = 0.0
         self._resistance = 0.0
