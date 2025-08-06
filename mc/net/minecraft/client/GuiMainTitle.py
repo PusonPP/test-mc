@@ -1,6 +1,5 @@
 from mc.net.minecraft.client.gui.GuiScreen import GuiScreen
 from mc.net.minecraft.client.gui.GuiOptions import GuiOptions
-from mc.net.minecraft.client.gui.GuiNewLevel import GuiNewLevel
 from mc.net.minecraft.client.gui.GuiLoadLevel import GuiLoadLevel
 from mc.net.minecraft.client.gui.GuiButton import GuiButton
 from mc.net.minecraft.client.render.Tessellator import tessellator
@@ -38,7 +37,10 @@ class GuiMainTitle(GuiScreen):
         if button.id == 0:
             self.mc.displayGuiScreen(GuiOptions(self, self.mc.options))
         elif button.id == 1:
-            self.mc.displayGuiScreen(GuiNewLevel(self))
+            # Directly generate a floating island world (size: Normal, shape: Square, theme: Normal)
+            self.mc.generateNewLevel(1, 0, 2, 0)
+            self.mc.displayGuiScreen(None)
+            self.mc.grabMouse()
         elif self.mc.session and button.id == 2:
             self.mc.displayGuiScreen(GuiLoadLevel(self))
 
