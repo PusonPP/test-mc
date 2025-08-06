@@ -23,9 +23,7 @@ class ItemBlock(Item):
             return
 
         block = blocks.blocksList[world.getBlockId(x, y, z)]
-        if self.__blockID <= 0 or block and block != blocks.waterMoving and \
-           block != blocks.waterStill and block != blocks.lavaMoving and \
-           block != blocks.lavaStill and block != blocks.fire:
+        if self.__blockID <= 0 or block:
             return
 
         block = blocks.blocksList[self.__blockID]

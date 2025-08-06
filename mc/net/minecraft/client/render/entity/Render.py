@@ -103,38 +103,4 @@ class Render:
             gl.glDepthMask(True)
 
         if entity.fire > 0:
-            gl.glDisable(gl.GL_LIGHTING)
-            tex = blocks.fire.blockIndexInTexture
-            xt = (tex & 15) << 4
-            tex &= 240
-            u0 = xt / 256.0
-            u1 = (xt + 15.99) / 256.0
-            v0 = tex / 256.0
-            v1 = (tex + 15.99) / 256.0
-            gl.glPushMatrix()
-            gl.glTranslatef(xd, yd, zd)
-            scale = entity.width * 1.4
-            gl.glScalef(scale, scale, scale)
-            self._loadTexture('terrain.png')
-            t = tessellator
-            xo = 1.0
-            zo = 0.0
-            aspect = entity.height / entity.width
-            gl.glRotatef(-self._renderManager.playerViewY, 0.0, 1.0, 0.0)
-            gl.glTranslatef(0.0, 0.0, 0.4 + int(aspect) * 0.02)
-            gl.glColor4f(1.0, 1.0, 1.0, 1.0)
-            t.startDrawingQuads()
-
-            while aspect > 0.0:
-                t.addVertexWithUV(-0.5, 0.0 - zo, 0.0, u0, v1)
-                t.addVertexWithUV(xo - 0.5, 0.0 - zo, 0.0, u1, v1)
-                t.addVertexWithUV(xo - 0.5, 1.4 - zo, 0.0, u1, v0)
-                t.addVertexWithUV(-0.5, 1.4 - zo, 0.0, u0, v0)
-                aspect -= 1.0
-                zo -= 1.0
-                xo *= 0.9
-                gl.glTranslatef(0.0, 0.0, -0.04)
-
-            t.draw()
-            gl.glPopMatrix()
-            gl.glEnable(gl.GL_LIGHTING)
+            pass

@@ -18,23 +18,7 @@ class PlayerControllerSP(PlayerController):
         self.__mobSpawner = None
 
     def onRespawn(self, player):
-        x = int(player.posX)
-        y = int(player.posY)
-        z = int(player.posZ)
-        for xx in range(x - 3, x + 4):
-            for yy in range(y - 2, y + 3):
-                for zz in range(z - 3, z + 4):
-                    blockId = blocks.obsidian.blockID if yy < y - 1 else 0
-                    if xx == x - 3 or zz == z - 3 or xx == x + 3 or zz == z + 3 or yy == y - 2 or yy == y + 2:
-                        blockId = blocks.cobblestoneMossy.blockID
-
-                    if yy == y and zz == z and (xx == x - 3 + 1 or xx == x + 3 - 1):
-                        blockId = blocks.torch.blockID
-
-                    if zz == z - 3 and xx == x and yy >= y - 1 and yy <= y:
-                        blockId = 0
-
-                    self._mc.theWorld.setBlockWithNotify(xx, yy, zz, blockId)
+        pass
 
     def sendBlockRemoved(self, x, y, z):
         block = self._mc.theWorld.getBlockId(x, y, z)

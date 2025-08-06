@@ -8,19 +8,12 @@ from mc.net.minecraft.game.level.World cimport World
 
 @cython.final
 cdef class RenderBlocks:
-
-    cdef:
-        Tessellator __tessellator
-        World __blockAccess
-        int __overrideBlockTexture
-        bint __flipTexture
+    cdef Tessellator __tessellator
+    cdef World __blockAccess
+    cdef int __overrideBlockTexture
+    cdef bint __flipTexture
 
     cdef bint renderBlockByRenderType(self, Block block, int x, int y, int z)
-    cdef __renderBlockFire(self, Block block, int x, int y, int z)
-    cdef __renderBlockGear(self, Block block, int x, int y, int z)
-    cdef __renderBlockTorch(self, Block block, float x, float y, float z,
-                            float xOffset, float zOffset)
-    cdef __renderBlockPlant(self, Block block, float x, float y, float z)
     cdef float __shouldSideBeRendered(self, int x, int y, int z)
     cdef __renderBlockBottom(self, Block block, float x, float y, float z, int tex)
     cdef __renderBlockTop(self, Block block, float x, float y, float z, int tex)
