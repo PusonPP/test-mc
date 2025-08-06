@@ -111,39 +111,8 @@ cdef class RenderGlobal:
 
         self.__t.draw()
         gl.glEndList()
+        # No water surface is rendered in this simplified version.
         gl.glNewList(self.__glGenList + 1, gl.GL_COMPILE)
-        gl.glColor3f(1.0, 1.0, 1.0)
-        waterLevel = self.__worldObj.getWaterLevel()
-        gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
-        s = 128
-        if s > self.__worldObj.width:
-            s = self.__worldObj.width
-        if s > self.__worldObj.length:
-            s = self.__worldObj.length
-
-        d = 2048 // s
-        self.__t.startDrawingQuads()
-        minX = blocks.waterMoving.minX
-        minZ = blocks.waterMoving.minZ
-
-        for xx in range(-s * d, self.__worldObj.width + s * d, s):
-            for zz in range(-s * d, self.__worldObj.length + s * d, s):
-                yy = waterLevel + blocks.waterMoving.minY
-                if waterLevel < 0.0 or xx < 0 or zz < 0 or \
-                   xx >= self.__worldObj.width or \
-                   zz >= self.__worldObj.length:
-                    self.__t.addVertexWithUV(xx + minX, yy, (zz + s) + minZ, 0.0, s)
-                    self.__t.addVertexWithUV((xx + s) + minX, yy, (zz + s) + minZ, s, s)
-                    self.__t.addVertexWithUV((xx + s) + minX, yy, zz + minZ, s, 0.0)
-                    self.__t.addVertexWithUV(xx + minX, yy, zz + minZ, 0.0, 0.0)
-
-                    self.__t.addVertexWithUV(xx + minX, yy, zz + minZ, 0.0, 0.0)
-                    self.__t.addVertexWithUV((xx + s) + minX, yy, zz + minZ, s, 0.0)
-                    self.__t.addVertexWithUV((xx + s) + minX, yy, (zz + s) + minZ, s, s)
-                    self.__t.addVertexWithUV(xx + minX, yy, (zz + s) + minZ, 0.0, s)
-
-        self.__t.draw()
-        gl.glDisable(gl.GL_BLEND)
         gl.glEndList()
         self.__markBlocksForUpdate(
             0, 0, 0, self.__worldObj.width, self.__worldObj.height,
@@ -289,8 +258,7 @@ cdef class RenderGlobal:
             0, self.__worldObj.getGroundLevel(), 0
         )
         gl.glBindTexture(gl.GL_TEXTURE_2D, self.__renderEngine.getTexture('dirt.png'))
-        if self.__worldObj.getGroundLevel() > self.__worldObj.getWaterLevel() and \
-           self.__worldObj.defaultFluid == blocks.waterMoving.blockID:
+        if self.__worldObj.getGroundLevel() > self.__worldObj.getWaterLevel():
             gl.glBindTexture(gl.GL_TEXTURE_2D, self.__renderEngine.getTexture('grass.png'))
 
         gl.glColor4f(br, br, br, 1.0)
