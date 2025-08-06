@@ -203,18 +203,13 @@ cdef class EntityLiving(Entity):
             self.onDeath(entity)
 
     def onDeath(self, Entity entity):
-        cdef int i
-        cdef int drops = self._rand.nextInt(3)
-        cdef int drop = self._rand.nextInt(3)
-        if drop == 0:
-            for i in range(drops):
-                self.entityDropItem(items.silk.shiftedIndex, 1)
-        elif drop == 1:
-            for i in range(drops):
-                self.entityDropItem(items.gunpowder.shiftedIndex, 1)
-        elif drop == 2:
-            for i in range(drops):
-                self.entityDropItem(items.feather.shiftedIndex, 1)
+        # Drop logic for miscellaneous items has been removed.  The original
+        # implementation spawned items such as string, gunpowder and feathers
+        # which no longer exist in this pared down code base.  Attempting to
+        # reference them would raise ``AttributeError`` exceptions on the
+        # :mod:`Items` singleton.  For the simplified sandbox we simply avoid
+        # spawning any extra loot when an entity dies.
+        pass
 
     cdef _fall(self, float d):
         cdef int damage = <int>ceil(d - 3.0)

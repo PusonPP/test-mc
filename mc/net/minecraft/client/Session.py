@@ -8,7 +8,6 @@ class Session:
         blocks.dirt,
         blocks.planks,
         blocks.wood,
-        blocks.leaves,
         blocks.grass,
     )
     print(len(registeredBlocksList))

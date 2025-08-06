@@ -1,16 +1,24 @@
+"""Minimal crafting manager.
+
+This project originally implemented a sizeable subset of the classic
+Minecraft crafting system.  The majority of that code referenced dozens of
+items and blocks that are no longer present in this trimmed down
+distribution which only contains a handful of basic blocks.  Importing the
+old recipe modules attempted to access attributes such as
+``items.ingotIron`` which no longer exist on :mod:`Items` and resulted in an
+``AttributeError`` during start-up.
+
+For the purposes of this kata we only require the ability to register and
+look up shaped recipes.  The helper recipe modules and large predefined
+recipe list have therefore been removed leaving a much smaller and safer
+implementation.
+"""
+
 from mc.net.minecraft.game.item.Item import Item
-from mc.net.minecraft.game.item.Items import items
 from mc.net.minecraft.game.item.ItemStack import ItemStack
 from mc.net.minecraft.game.item.recipe.ShapedRecipes import ShapedRecipes
-from mc.net.minecraft.game.item.recipe.RecipesTools import RecipesTools
-from mc.net.minecraft.game.item.recipe.RecipesWeapons import RecipesWeapons
-from mc.net.minecraft.game.item.recipe.RecipesIngots import RecipesIngots
-from mc.net.minecraft.game.item.recipe.RecipesBowl import RecipesBowl
-from mc.net.minecraft.game.item.recipe.RecipesBlocks import RecipesBlocks
-from mc.net.minecraft.game.item.recipe.RecipeSorter import RecipeSorter
 from mc.net.minecraft.game.level.block.Block import Block
-from mc.net.minecraft.game.level.block.Blocks import blocks
-from functools import cmp_to_key
+
 
 class CraftingManager:
     instance = None
@@ -24,45 +32,12 @@ class CraftingManager:
         return cls.instance
 
     def __init__(self):
+        # Recipes are registered dynamically by the rest of the code base.
+        # The original project populated a large list of default recipes here
+        # which depended on many non-existent items.  Keeping the list empty
+        # avoids those lookups while still allowing custom recipes to be
+        # added by calling :meth:`addRecipe` if ever required.
         self.__recipes = []
-
-        RecipesTools().addRecipes(self)
-        RecipesWeapons().addRecipes(self)
-        RecipesIngots().addRecipes(self)
-        RecipesBowl()
-        self.addRecipe(ItemStack(items.bowlSoup),
-                       ('Y', 'X', '#', ord('X'), blocks.mushroomBrown, ord('Y'),
-                        blocks.mushroomRed, ord('#'), items.bowlEmpty))
-        self.addRecipe(ItemStack(items.bowlSoup),
-                       ('Y', 'X', '#', ord('X'), blocks.mushroomRed, ord('Y'),
-                        blocks.mushroomBrown, ord('#'), items.bowlEmpty))
-        RecipesBlocks()
-        self.addRecipe(ItemStack(blocks.chest),
-                       ('###', '# #', '###', ord('#'), blocks.planks))
-        self.addRecipe(ItemStack(blocks.workbench),
-                       ('##', '##', ord('#'), blocks.planks))
-        self.addRecipe(ItemStack(blocks.tnt, 1),
-                       ('X#X', '#X#', 'X#X', ord('X'),
-                       items.gunpowder, ord('#'), blocks.sand))
-        self.addRecipe(ItemStack(items.bow, 1),
-                       (' #X', '# X', ' #X', ord('X'),
-                       items.silk, ord('#'), items.stick))
-        self.addRecipe(ItemStack(blocks.stairSingle, 3),
-                       ('###', ord('#'), blocks.cobblestone))
-        self.addRecipe(ItemStack(items.arrow, 4),
-                       ('X', '#', 'Y', ord('Y'), items.feather, ord('X'),
-                       items.ingotIron, ord('#'), items.stick))
-        self.addRecipe(ItemStack(items.stick, 4),
-                       ('#', '#', ord('#'), blocks.planks))
-        self.addRecipe(ItemStack(blocks.torch, 4),
-                       ('X', '#', ord('X'), items.coal, ord('#'), items.stick))
-        self.addRecipe(ItemStack(items.bowlEmpty, 4),
-                       ('# #', ' # ', ord('#'), blocks.planks))
-        self.__recipes = sorted(
-            self.__recipes,
-            key=cmp_to_key(RecipeSorter(self).compare)
-        )
-        print(len(self.__recipes), 'recipes')
 
     def addRecipe(self, stack, solution):
         slotLocations = ''

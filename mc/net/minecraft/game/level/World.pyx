@@ -961,7 +961,12 @@ cdef class World:
                        (self.rand.nextInt(2) == 0 or leafExtLeft == 0):
                         continue
 
-                    self.setBlockWithNotify(xx, yy, zz, blocks.leaves.blockID)
+                    # Leaf placement removed – the reduced block set does not
+                    # include a dedicated leaves block.  Keeping this call
+                    # would raise an ``AttributeError`` on ``blocks`` during
+                    # world generation.  Trees now consist solely of wood
+                    # blocks for their trunks.
+                    pass
 
         for i in range(logs):
             self.setBlockWithNotify(x, y + i, z, blocks.wood.blockID)
