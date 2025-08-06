@@ -20,7 +20,16 @@ class Blocks:
         self.soundWoodFootstep = StepSound('wood', 1.0, 1.0)
         self.soundGravelFootstep = StepSound('gravel', 1.0, 1.0)
         self.soundGrassFootstep = StepSound('grass', 1.0, 1.0)
+        # ``Block`` defaults to using ``soundPowderFootstep`` during
+        # initialisation.  The original project expected the ``Blocks``
+        # container to always provide this attribute but it was never
+        # defined which caused an ``AttributeError`` during start up.
+        #
+        # No unique powder footstep sounds exist in the bundled
+        # resources, so we simply alias the powder sound to the stone
+        # step sound so that the default reference is always valid.
         self.soundStoneFootstep = StepSound('stone', 1.0, 1.0)
+        self.soundPowderFootstep = self.soundStoneFootstep
 
         self.stone = BlockStone(self, 1, 1).setHardness(1.0).setResistance(10.0)
         self.stone.stepSound = self.soundStoneFootstep
