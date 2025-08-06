@@ -6,9 +6,6 @@ class BlockLog(Block):
         super().__init__(blocks, 17)
         self.blockIndexInTexture = 20
 
-    def quantityDropped(self, random):
-        return random.nextInt(3) + 3
-
     def idDropped(self):
         return self.blocks.planks.blockID
 

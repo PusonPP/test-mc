@@ -157,29 +157,9 @@ class ItemRenderer:
         if self.__mc.thePlayer.fire > 0:
             tex = self.__mc.renderEngine.getTexture('terrain.png')
             gl.glBindTexture(gl.GL_TEXTURE_2D, tex)
-            t = tessellator
             gl.glColor4f(1.0, 1.0, 1.0, 0.9)
             gl.glEnable(gl.GL_BLEND)
             gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
-            for i in range(2):
-                gl.glPushMatrix()
-                tex = blocks.fire.blockIndexInTexture + (i << 4)
-                xt = (tex & 15) << 4
-                tex &= 240
-                u0 = xt / 256.0
-                u1 = (xt + 15.99) / 256.0
-                v0 = tex / 256.0
-                v1 = (tex + 15.99) / 256.0
-                gl.glTranslatef(-((i << 1) - 1) * 0.24, -0.3, 0.0)
-                gl.glRotatef(((i << 1) - 1) * 10.0, 0.0, 1.0, 0.0)
-                t.startDrawingQuads()
-                t.addVertexWithUV(-0.5, -0.5, -0.5, u1, v1)
-                t.addVertexWithUV(0.5, -0.5, -0.5, u0, v1)
-                t.addVertexWithUV(0.5, 0.5, -0.5, u0, v0)
-                t.addVertexWithUV(-0.5, 0.5, -0.5, u1, v0)
-                t.draw()
-                gl.glPopMatrix()
-
             gl.glColor4f(1.0, 1.0, 1.0, 1.0)
             gl.glDisable(gl.GL_BLEND)
         if self.__mc.thePlayer.isInsideOfMaterial():

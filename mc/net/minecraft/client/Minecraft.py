@@ -209,10 +209,6 @@ class Minecraft(window.Window):
                                                      self.objectMouseOver.blockZ)
                     if block == blocks.grass.blockID:
                         block = blocks.dirt.blockID
-                    elif block == blocks.stairDouble.blockID:
-                        block = blocks.stairSingle.blockID
-                    elif block == blocks.bedrock.blockID:
-                        block = blocks.stone.blockID
 
                     self.thePlayer.inventory.getFirstEmptyStack(block)
         except Exception as e:

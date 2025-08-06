@@ -110,8 +110,7 @@ class RenderItem(Render):
             gl.glRotatef(rot, 0.0, 1.0, 0.0)
             self._loadTexture('terrain.png')
             scale = 0.25
-            if not blocks.blocksList[item.itemID].renderAsNormalBlock() and \
-               item.itemID != blocks.stairSingle.blockID:
+            if not blocks.blocksList[item.itemID].renderAsNormalBlock():
                 scale = 0.5
 
             gl.glScalef(scale, scale, scale)
