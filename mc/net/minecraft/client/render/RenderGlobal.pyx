@@ -8,7 +8,6 @@ from mc.net.minecraft.game.level.World cimport World
 from mc.net.minecraft.game.level.block.Blocks import blocks
 from mc.net.minecraft.game.level.block.Block cimport Block
 from mc.net.minecraft.game.entity.Entity cimport Entity
-from mc.net.minecraft.game.entity.player.EntityPlayer import EntityPlayer
 from mc.net.minecraft.client.effect.EntityBubbleFX import EntityBubbleFX
 from mc.net.minecraft.client.effect.EntityExplodeFX import EntityExplodeFX
 from mc.net.minecraft.client.effect.EntitySmokeFX import EntitySmokeFX
@@ -20,7 +19,6 @@ from mc.net.minecraft.client.render.Tessellator import tessellator
 from mc.net.minecraft.client.render.WorldRenderer cimport WorldRenderer
 from mc.net.minecraft.client.render.RenderSorter import RenderSorter
 from mc.net.minecraft.client.render.RenderBlocks cimport RenderBlocks
-from mc.net.minecraft.client.render.entity.RenderManager import RenderManager
 from mc.JavaUtils import BufferUtils
 from mc.JavaUtils cimport getMillis
 from pyglet import gl
@@ -40,6 +38,7 @@ cdef class RenderGlobal:
         self.__sortedWorldRenderers = []
         self.__worldRenderers = []
         self.__globalRenderBlocks = None
+        from mc.net.minecraft.client.render.entity.RenderManager import RenderManager
         self.renderManager = RenderManager()
         self.__cloudOffsetX = 0
         self.__prevSortX = -9999.0
@@ -125,6 +124,7 @@ cdef class RenderGlobal:
         cdef bint exists
         cdef list entities
         cdef Entity entity
+        from mc.net.minecraft.game.entity.player.EntityPlayer import EntityPlayer
 
         self.renderManager.setPlayerViewY(a)
         self.renderManager.renderEngine = self.__renderEngine
