@@ -3,6 +3,7 @@ from mc.net.minecraft.game.level.block.BlockGrass import BlockGrass
 from mc.net.minecraft.game.level.block.BlockDirt import BlockDirt
 from mc.net.minecraft.game.level.block.BlockLog import BlockLog
 from mc.net.minecraft.game.level.block.BlockStone import BlockStone
+from mc.net.minecraft.game.level.block.BlockFire import BlockFire
 from mc.net.minecraft.game.level.block.StepSound import StepSound
 
 
@@ -39,6 +40,12 @@ class Blocks:
 
         self.wood = BlockLog(self, 17).setHardness(2.5)
         self.wood.stepSound = self.soundWood
+
+        # Placeholder fire block so texture effects can look up its texture
+        # index.  The original game contains far more complex fire behaviour,
+        # but for this project we only require the block to exist.
+        self.fire = BlockFire(self)
+        self.fire.stepSound = self.soundPowderFootstep
 
 
 blocks = Blocks()
