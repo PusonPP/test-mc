@@ -1,10 +1,13 @@
 import pyglet
 import platform
 import os
+import ctypes.util
+
 pyglet.options['debug_gl'] = False
 pyglet.options['search_local_libs'] = True
 pyglet.options['audio'] = ('openal', 'silent')
-pyglet.options['headless'] = True
+if ctypes.util.find_library('EGL'):
+    pyglet.options['headless'] = True
 
 if pyglet.compat_platform == 'win32':
     os.environ['PATH'] += os.pathsep + os.path.join(os.getcwd(), 'mc', 'lib')
