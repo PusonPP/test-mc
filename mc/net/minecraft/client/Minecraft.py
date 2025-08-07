@@ -52,7 +52,6 @@ from mc.net.minecraft.client.gui.GuiIngame import GuiIngame
 from mc.net.minecraft.client.gui.container.GuiInventory import GuiInventory
 from mc.net.minecraft.client.effect.EffectRenderer import EffectRenderer
 from mc.net.minecraft.client.render.texture.TextureFlamesFX import TextureFlamesFX
-from mc.net.minecraft.client.render.texture.TextureLavaFX import TextureLavaFX
 from mc.net.minecraft.client.render.texture.TextureGearsFX import TextureGearsFX
 from mc.net.minecraft.client.render.RenderGlobal import RenderGlobal
 from mc.net.minecraft.client.render.EntityRenderer import EntityRenderer
@@ -126,8 +125,6 @@ class Minecraft(window.Window):
         self.mcDataDir = ''
 
         self.__serverIp = ''
-
-        self.__textureLavaFX = TextureLavaFX()
 
         self.running = False
         self.debug = ''
@@ -405,7 +402,6 @@ class Minecraft(window.Window):
         self.sndManager.loadSoundSettings(self.options)
 
         self.renderEngine = RenderEngine(self.options)
-        self.renderEngine.registerTextureFX(self.__textureLavaFX)
         self.renderEngine.registerTextureFX(TextureFlamesFX(0))
         self.renderEngine.registerTextureFX(TextureFlamesFX(1))
         self.renderEngine.registerTextureFX(TextureGearsFX(0))
@@ -662,8 +658,6 @@ class Minecraft(window.Window):
 
         if self.effectRenderer:
             self.effectRenderer.clearEffects(world)
-
-        self.__textureLavaFX.textureId = 0
 
         gc.collect()
 
