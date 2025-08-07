@@ -31,7 +31,6 @@ cdef class LevelGenerator:
         cdef int x, y, z, idx, ground
 
         ground = height // 2
-        world.waterLevel = 0
         world.groundLevel = ground
 
         for x in range(width):

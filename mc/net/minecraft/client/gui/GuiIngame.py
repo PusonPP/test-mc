@@ -55,16 +55,6 @@ class GuiIngame(Gui):
                 elif (i << 1) + 1 == health:
                     self.drawTexturedModalRect(x, y, 61, 0, 9, 9)
 
-            if self.__mc.thePlayer.isInsideOfMaterial():
-                bubbles = math.ceil((self.__mc.thePlayer.air - 2) * 10.0 / 300.0)
-                rem = math.ceil(self.__mc.thePlayer.air * 10.0 / 300.0) - bubbles
-                for i in range(bubbles + rem):
-                    if i < bubbles:
-                        self.drawTexturedModalRect(scaledWidth / 2 - 91 + (i << 3),
-                                                   scaledHeight - 32 - 9, 16, 18, 9, 9)
-                    else:
-                        self.drawTexturedModalRect(scaledWidth / 2 - 91 + (i << 3),
-                                                   scaledHeight - 32 - 9, 25, 18, 9, 9)
 
         gl.glDisable(gl.GL_BLEND)
         gl.glEnable(gl.GL_NORMALIZE)

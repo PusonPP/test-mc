@@ -52,8 +52,6 @@ from mc.net.minecraft.client.gui.GuiIngame import GuiIngame
 from mc.net.minecraft.client.gui.container.GuiInventory import GuiInventory
 from mc.net.minecraft.client.effect.EffectRenderer import EffectRenderer
 from mc.net.minecraft.client.render.texture.TextureFlamesFX import TextureFlamesFX
-from mc.net.minecraft.client.render.texture.TextureWaterFlowFX import TextureWaterFlowFX
-from mc.net.minecraft.client.render.texture.TextureWaterFX import TextureWaterFX
 from mc.net.minecraft.client.render.texture.TextureLavaFX import TextureLavaFX
 from mc.net.minecraft.client.render.texture.TextureGearsFX import TextureGearsFX
 from mc.net.minecraft.client.render.RenderGlobal import RenderGlobal
@@ -129,7 +127,6 @@ class Minecraft(window.Window):
 
         self.__serverIp = ''
 
-        self.__textureWaterFX = TextureWaterFX()
         self.__textureLavaFX = TextureLavaFX()
 
         self.running = False
@@ -409,8 +406,6 @@ class Minecraft(window.Window):
 
         self.renderEngine = RenderEngine(self.options)
         self.renderEngine.registerTextureFX(self.__textureLavaFX)
-        self.renderEngine.registerTextureFX(self.__textureWaterFX)
-        self.renderEngine.registerTextureFX(TextureWaterFlowFX())
         self.renderEngine.registerTextureFX(TextureFlamesFX(0))
         self.renderEngine.registerTextureFX(TextureFlamesFX(1))
         self.renderEngine.registerTextureFX(TextureGearsFX(0))
@@ -668,10 +663,7 @@ class Minecraft(window.Window):
         if self.effectRenderer:
             self.effectRenderer.clearEffects(world)
 
-        self.__textureWaterFX.textureId = 0
         self.__textureLavaFX.textureId = 0
-        tex = self.renderEngine.getTexture('water.png')
-        self.__textureWaterFX.textureId = tex
 
         gc.collect()
 

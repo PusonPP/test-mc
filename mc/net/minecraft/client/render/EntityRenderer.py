@@ -216,9 +216,6 @@ class EntityRenderer:
                             if remaining > 0:
                                 self.__mc.renderGlobal.renderAllRenderLists()
 
-                            if self.__mc.theWorld.getGroundLevel() >= 0:
-                                self.__mc.renderGlobal.oobWaterRenderer()
-
                             gl.glDepthMask(True)
                             gl.glDisable(gl.GL_BLEND)
                             gl.glDisable(gl.GL_FOG)
@@ -326,8 +323,6 @@ class EntityRenderer:
                 gl.glTranslatef(-((i << 1) - 1) * 0.07, 0.0, 0.0)
 
             fov = 70.0
-            if self.__mc.thePlayer.isInsideOfMaterial():
-                fov = 60.0
 
             if self.__mc.thePlayer.health <= 0:
                 t = self.__mc.thePlayer.deathTime + alpha
@@ -418,7 +413,6 @@ class EntityRenderer:
 
             gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
             self.__setupFog()
-            self.__mc.renderGlobal.oobWaterRenderer()
             gl.glEnable(gl.GL_BLEND)
             gl.glDisable(gl.GL_CULL_FACE)
             gl.glColorMask(False, False, False, False)
@@ -542,11 +536,7 @@ class EntityRenderer:
             )]
         if block and block.getBlockMaterial() != Material.air:
             material = block.getBlockMaterial()
-            if material == Material.water:
-                self.__fogColorRed = 0.02
-                self.__fogColorGreen = 0.02
-                self.__fogColorBlue = 0.2
-            elif material == Material.lava:
+            if material == Material.lava:
                 self.__fogColorRed = 0.6
                 self.__fogColorGreen = 0.1
                 self.__fogColorBlue = 0.0
@@ -580,9 +570,7 @@ class EntityRenderer:
         if currentBlock and currentBlock.getBlockMaterial() != Material.air:
             material = currentBlock.getBlockMaterial()
             gl.glFogi(gl.GL_FOG_MODE, gl.GL_EXP)
-            if material == Material.water:
-                gl.glFogf(gl.GL_FOG_DENSITY, 0.1)
-            elif material == Material.lava:
+            if material == Material.lava:
                 gl.glFogf(gl.GL_FOG_DENSITY, 2.0)
         else:
             gl.glFogi(gl.GL_FOG_MODE, gl.GL_LINEAR)

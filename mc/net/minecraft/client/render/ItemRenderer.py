@@ -162,24 +162,6 @@ class ItemRenderer:
             gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
             gl.glColor4f(1.0, 1.0, 1.0, 1.0)
             gl.glDisable(gl.GL_BLEND)
-        if self.__mc.thePlayer.isInsideOfMaterial():
-            tex = self.__mc.renderEngine.getTexture('water.png')
-            gl.glBindTexture(gl.GL_TEXTURE_2D, tex)
-            t = tessellator
-            br = self.__mc.thePlayer.getBrightness(alpha)
-            gl.glColor4f(br, br, br, 0.5)
-            gl.glEnable(gl.GL_BLEND)
-            gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
-            gl.glPushMatrix()
-            t.startDrawingQuads()
-            t.addVertexWithUV(-1.0, -1.0, -0.5, 4.0, 4.0)
-            t.addVertexWithUV(1.0, -1.0, -0.5, 0.0, 4.0)
-            t.addVertexWithUV(1.0, 1.0, -0.5, 0.0, 0.0)
-            t.addVertexWithUV(-1.0, 1.0, -0.5, 4.0, 0.0)
-            t.draw()
-            gl.glPopMatrix()
-            gl.glColor4f(1.0, 1.0, 1.0, 1.0)
-            gl.glDisable(gl.GL_BLEND)
 
     def updateEquippedItem(self):
         self.__prevEquippedProgress = self.__equippedProgress

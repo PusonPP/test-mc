@@ -8,7 +8,6 @@ from mc.net.minecraft.game.level.World cimport World
 from mc.net.minecraft.game.level.block.Blocks import blocks
 from mc.net.minecraft.game.level.block.Block cimport Block
 from mc.net.minecraft.game.entity.Entity cimport Entity
-from mc.net.minecraft.client.effect.EntityBubbleFX import EntityBubbleFX
 from mc.net.minecraft.client.effect.EntityExplodeFX import EntityExplodeFX
 from mc.net.minecraft.client.effect.EntitySmokeFX import EntitySmokeFX
 from mc.net.minecraft.client.effect.EntityFlameFX import EntityFlameFX
@@ -61,7 +60,7 @@ cdef class RenderGlobal:
 
     def loadRenderers(self):
         cdef int lists, x, y, z, i, s, d, xx, zz
-        cdef float groundLevel, minX, minZ, waterLevel, yy
+        cdef float groundLevel
         cdef WorldRenderer chunk
 
         if self.__worldRenderers:
@@ -110,7 +109,6 @@ cdef class RenderGlobal:
 
         self.__t.draw()
         gl.glEndList()
-        # No water surface is rendered in this simplified version.
         gl.glNewList(self.__glGenList + 1, gl.GL_COMPILE)
         gl.glEndList()
         self.__markBlocksForUpdate(
@@ -257,20 +255,11 @@ cdef class RenderGlobal:
         cdef float br = self.__worldObj.getBlockLightValue(
             0, self.__worldObj.getGroundLevel(), 0
         )
-        gl.glBindTexture(gl.GL_TEXTURE_2D, self.__renderEngine.getTexture('dirt.png'))
-        if self.__worldObj.getGroundLevel() > self.__worldObj.getWaterLevel():
-            gl.glBindTexture(gl.GL_TEXTURE_2D, self.__renderEngine.getTexture('grass.png'))
+        gl.glBindTexture(gl.GL_TEXTURE_2D, self.__renderEngine.getTexture('grass.png'))
 
         gl.glColor4f(br, br, br, 1.0)
         gl.glEnable(gl.GL_TEXTURE_2D)
         gl.glCallList(self.__glGenList)
-
-    def oobWaterRenderer(self):
-        gl.glEnable(gl.GL_TEXTURE_2D)
-        gl.glEnable(gl.GL_BLEND)
-        gl.glBindTexture(gl.GL_TEXTURE_2D, self.__renderEngine.getTexture('water.png'))
-        gl.glCallList(self.__glGenList + 1)
-        gl.glDisable(gl.GL_BLEND)
 
     def updateRenderers(self, player):
         cdef int last, i
@@ -388,11 +377,7 @@ cdef class RenderGlobal:
 
     def spawnParticle(self, str particle, float x, float y, float z,
                       float xr, float yr, float zr):
-        if particle == 'bubble':
-            self.__mc.effectRenderer.addEffect(
-                EntityBubbleFX(self.__worldObj, x, y, z, xr, yr, zr)
-            )
-        elif particle == 'smoke':
+        if particle == 'smoke':
             self.__mc.effectRenderer.addEffect(
                 EntitySmokeFX(self.__worldObj, x, y, z)
             )

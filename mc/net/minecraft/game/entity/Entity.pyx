@@ -54,7 +54,6 @@ cdef class Entity:
         self.fireResistance = 1
         self.fire = 0
         self._maxAir = Entity.TOTAL_AIR_SUPPLY
-        self.__inWater = False
         self.heartsLife = 0
         self.air = Entity.TOTAL_AIR_SUPPLY
 
@@ -126,32 +125,6 @@ cdef class Entity:
         self.prevPosZ = self.posZ
         self.prevRotationPitch = self.rotationPitch
         self.prevRotationYaw = self.rotationYaw
-        if self.handleWaterMovement():
-            if not self.__inWater:
-                volume = sqrt(self.motionX * self.motionX * 0.2 + self.motionY * \
-                              self.motionY + self.motionZ * self.motionZ * 0.2) * 0.2
-                if volume > 1.0:
-                    volume = 1.0
-
-                self._worldObj.playSoundAtEntity(
-                    self, 'random.splash', volume,
-                    1.0 + (self._rand.nextFloat() - self._rand.nextFloat()) * 0.4
-                )
-                for i in range(<int>(1.0 + self.width * 20.0)):
-                    x = (self._rand.nextFloat() * 2.0 - 1.0) * self.width * 2.0
-                    z = (self._rand.nextFloat() * 2.0 - 1.0) * self.width * 2.0
-                    self._worldObj.spawnParticle(
-                        'bubble', self.posX + x,
-                        self.boundingBox.minY - self._rand.nextFloat() * 0.2,
-                        self.posZ + z, self.motionX, self.motionY, self.motionZ
-                    )
-
-            self.__fallDistance = 0.0
-            self.__inWater = True
-            self.fire = 0
-        else:
-            self.__inWater = False
-
         if self.fire > 0:
             if self.fire % 20 == 0:
                 self.attackEntityFrom(None, 1)
@@ -297,22 +270,14 @@ cdef class Entity:
                                                  sound.soundVolume * 0.15, sound.soundPitch)
 
         self.__ySize *= 0.4
-        inWater = self.handleWaterMovement()
         if self._worldObj.isBoundingBoxBurning(self.boundingBox):
             self._dealFireDamage(1)
-            if not inWater:
-                self.fire += 1
-                if self.fire == 0:
-                    self.fire = 300
+            self.fire += 1
+            if self.fire == 0:
+                self.fire = 300
         elif self.fire <= 0:
             self.fire = -self.fireResistance
 
-        if inWater and self.fire > 0:
-            self._worldObj.playSoundAtEntity(
-                self, 'random.fizz', 0.7,
-                1.6 + (self._rand.nextFloat() - self._rand.nextFloat()) * 0.4
-            )
-            self.fire = -self.fireResistance
 
     def _dealFireDamage(self, int hp):
         self.attackEntityFrom(None, 1)
@@ -320,17 +285,7 @@ cdef class Entity:
     cdef _fall(self, float distance):
         pass
 
-    cpdef bint handleWaterMovement(self):
-        return self._worldObj.handleMaterialAcceleration(self.boundingBox.expand(0.0, -0.4, 0.0),
-                                                         Material.water)
-
     def isInsideOfMaterial(self):
-        block = self._worldObj.getBlockId(<int>self.posX,
-                                          <int>(self.posY + 0.12),
-                                          <int>self.posZ)
-        if block != 0:
-            return blocks.blocksList[block].getBlockMaterial() == Material.water
-
         return False
 
     cdef bint handleLavaMovement(self):
