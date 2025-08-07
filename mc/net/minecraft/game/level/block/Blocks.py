@@ -20,6 +20,7 @@ class Blocks:
         self.soundWood = StepSound('wood', 1.0, 1.0)
         self.soundGrass = StepSound('grass', 1.0, 1.0)
         self.soundStone = StepSound('stone', 1.0, 1.0)
+        self.soundPowderFootstep = self.soundStone
 
         self.stone = BlockStone(self, 1, 1).setHardness(1.0).setResistance(10.0)
         self.stone.stepSound = self.soundStone
