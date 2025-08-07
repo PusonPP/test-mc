@@ -53,14 +53,12 @@ cdef class Entity:
         public int fireResistance
         public int fire
         public int _maxAir
-        bint __inWater
         public int heartsLife
         public int air
 
     cdef bint isOffsetPositionInLiquid(self, float xa, float ya, float za)
     cpdef moveEntity(self, float x, float y, float z)
     cdef _fall(self, float distance)
-    cpdef bint handleWaterMovement(self)
     cdef bint handleLavaMovement(self)
     cpdef moveFlying(self, float xa, float za, float speed)
     cpdef float getBrightness(self, float a)

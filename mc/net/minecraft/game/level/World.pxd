@@ -32,8 +32,6 @@ cdef class World:
 
         public float rotSpawn
 
-        public int defaultFluid
-
         set __worldAccesses
         set __tickList
 
@@ -47,7 +45,6 @@ cdef class World:
 
         public EntityMap entityMap
 
-        public int waterLevel
         public int groundLevel
         public int cloudHeight
 
@@ -93,7 +90,6 @@ cdef class World:
     cpdef inline bint isBlockNormalCube(self, int x, int y, int z)
     cdef inline bint __isInLevelBounds(self, int x, int y, int z)
     cpdef inline int getGroundLevel(self)
-    cdef inline int getWaterLevel(self)
     cdef bint getIsAnyLiquid(self, AxisAlignedBB box)
     cdef bint isBoundingBoxBurning(self, AxisAlignedBB box)
     cdef bint handleMaterialAcceleration(self, AxisAlignedBB box, int liquidId)
@@ -108,7 +104,6 @@ cdef class World:
     cdef inline char getBlockBrightness(self, int x, int y, int z)
     cdef inline char __getBlockMetadata(self, int x, int y, int z)
     cpdef inline int getBlockMaterial(self, int x, int y, int z)
-    cpdef inline bint isWater(self, int x, int y, int z)
     cpdef bint growTrees(self, int x, int y, int z)
     cdef int fluidFlowCheck(self, int x, int y, int z, int source, int tt)
     cdef bint floodFill(self, int x, int y, int z, int source, int tt)

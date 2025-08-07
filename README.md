@@ -47,7 +47,7 @@ Press I to open your inventory, F5 to toggle rain and F7 to take a cool isometri
 Smelting is unique in early Indev: to get iron or gold ingots, light the dropped ores on fire or throw them in lava.
 
 The Indev level generator is customizable and you can choose between the *Inland*, *Island*, *Floating*, and *Flat* level types.
-You can specify the world theme as *Normal* or *Hell* (lava and dirt instead of water and grass), world size, and world shape (*Square*, *Long*, *Deep*).
+You can specify the world theme as *Normal* or *Hell* (lava and dirt instead of grass), world size, and world shape (*Square*, *Long*, *Deep*).
 
 Levels can be saved to a single *.mclevel* NBT file in the pause menu. The level files are perfectly compatible with Java and vice versa.
 

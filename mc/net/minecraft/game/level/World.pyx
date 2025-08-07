@@ -57,9 +57,6 @@ cdef class World:
 
         self.rotSpawn = 0.0
 
-        # No fluids are used in this trimmed down version.
-        self.defaultFluid = 0
-
         self.__worldAccesses = set()
         self.__tickList = set()
 
@@ -181,11 +178,10 @@ cdef class World:
                 self.zSpawn = z
                 break
 
-            if y > self.waterLevel:
-                self.xSpawn = x
-                self.ySpawn = y
-                self.zSpawn = z
-                break
+            self.xSpawn = x
+            self.ySpawn = y
+            self.zSpawn = z
+            break
 
     cdef void __updateSkylight(self, int x0, int y0, int x1, int y1) except *:
         cdef int x, z, oldDepth, y, yl0, yl1
@@ -563,9 +559,6 @@ cdef class World:
     cpdef inline int getGroundLevel(self):
         return self.groundLevel
 
-    cdef inline int getWaterLevel(self):
-        return self.waterLevel
-
     cdef bint getIsAnyLiquid(self, AxisAlignedBB box):
         cdef int minX, maxX, minY, maxY, minZ, maxZ, x, y, z
         cdef Block block
@@ -739,10 +732,6 @@ cdef class World:
             return Material.air
 
         return (<Block>blocks.blocksList[block]).getBlockMaterial()
-
-    cpdef inline bint isWater(self, int x, int y, int z):
-        # Water blocks are not present in this trimmed down version.
-        return False
 
     @cython.cdivision(True)
     def rayTraceBlocks(self, vec1, vec2):

@@ -57,24 +57,7 @@ cdef class EntityLiving(Entity):
 
         Entity.onEntityUpdate(self)
 
-        if self.isInsideOfMaterial():
-            self.air -= 1
-            if self.air == -20:
-                self.air = 0
-                for i in range(8):
-                    x = self._rand.nextFloat() - self._rand.nextFloat()
-                    y = self._rand.nextFloat() - self._rand.nextFloat()
-                    z = self._rand.nextFloat() - self._rand.nextFloat()
-                    self._worldObj.spawnParticle(
-                        'bubble', self.posX + x, self.posY + y, self.posZ + z,
-                        self.motionX, self.motionY, self.motionZ
-                    )
-
-                self.attackEntityFrom(None, 2)
-
-            self.fire = 0
-        else:
-            self.air = self._maxAir
+        self.air = self._maxAir
 
         self.prevCameraPitch = self.cameraPitch
         if self.__attackTime > 0:
@@ -228,18 +211,7 @@ cdef class EntityLiving(Entity):
         self._entityAI = ai
 
     cdef travel(self, float x, float z):
-        if self.handleWaterMovement():
-            self.moveFlying(x, z, 0.02)
-            self.moveEntity(self.motionX, self.motionY, self.motionZ)
-            self.motionX *= 0.8
-            self.motionY *= 0.8
-            self.motionZ *= 0.8
-            self.motionY -= 0.02
-            if self.isCollidedHorizontally and self.isOffsetPositionInLiquid(
-                self.motionX, self.motionY + 0.6 - self.posY + self.posY, self.motionZ
-            ):
-                self.motionY = 0.3
-        elif self.handleLavaMovement():
+        if self.handleLavaMovement():
             self.moveFlying(x, z, 0.02)
             self.moveEntity(self.motionX, self.motionY, self.motionZ)
             self.motionX *= 0.5

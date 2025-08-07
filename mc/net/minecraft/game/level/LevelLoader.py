@@ -41,8 +41,6 @@ class LevelLoader:
         world.skyBrightness = environmentTag['SkyBrightness'].real / 100.0
         world.cloudHeight = environmentTag['CloudHeight'].real
         world.groundLevel = environmentTag['SurroundingGroundHeight'].real
-        world.waterLevel = environmentTag['SurroundingWaterHeight'].real
-        world.defaultFluid = environmentTag['SurroundingWaterType'].real
         world.generate(width, height, length, bytearray(mapTag['Blocks']))
         if self.__guiLoading:
             self.__guiLoading.displayLoadingString('Preparing entities..')
@@ -82,9 +80,7 @@ class LevelLoader:
                                    'SkyBrightness': Byte(int(world.skyBrightness * 100.0)),
                                    'CloudHeight': Short(world.cloudHeight),
                                    'SurroundingGroundHeight': Short(world.groundLevel),
-                                   'SurroundingWaterHeight': Short(world.waterLevel),
-                                   'SurroundingGroundType': Byte(blocks.grass.blockID),
-                                   'SurroundingWaterType': Byte(world.defaultFluid)})
+                                   'SurroundingGroundType': Byte(blocks.grass.blockID)})
         mapTag = Compound({'Width': Short(world.width), 'Length': Short(world.length),
                            'Height': Short(world.height),
                            'Blocks': ByteArray(world.getBlocks()),
