@@ -43,8 +43,11 @@ class Blocks:
 
         # Placeholder fire block so texture effects can look up its texture
         # index.  The original game contains far more complex fire behaviour,
-        # but for this project we only require the block to exist.
-        self.fire = BlockFire(self)
+        # but for this project we only require the block to exist.  The Cython
+        # implementation of ``BlockFire`` expects explicit ``block_id`` and
+        # ``tex`` parameters, so pass the default values to remain compatible
+        # with both the Python and compiled versions.
+        self.fire = BlockFire(self, 51, 15)
         self.fire.stepSound = self.soundPowderFootstep
 
 
